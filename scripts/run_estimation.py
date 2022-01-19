@@ -18,7 +18,6 @@ def select_algo(meth):
 	if meth == 'kalman_known':
 		run_kalman()
 	
-	pass
 
 def main():
     
