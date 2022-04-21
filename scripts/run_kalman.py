@@ -9,19 +9,21 @@ directory.
 
 @author: nithila
 """
-
-from pets.kalman_known import kalman_algo
-from pets.noisy_input import noisy_signal
-from pets.gen_results import results1,results2, results3,results4
 import json
 import sys
 import os.path as osp
 import numpy as np
 
+sys.path.append(osp.join(osp.dirname(__file__), '..', 'src'))
+from pets.kalman_known import kalman_algo
+from pets.noisy_input import noisy_signal
+from pets.gen_results import results1,results2, results3,results4
+
+
 this_dir = osp.dirname(__file__)
 
 #Navigating to the config files
-config_dir = osp.join(this_dir,'..','configs','config_kalman.json')
+config_dir = osp.join(this_dir,'..','configs','config_kalman_known.json')
 
 #Loading the config parameters into the code
 with open(config_dir) as config_file:
@@ -36,7 +38,7 @@ if (len(config['a_k']) != int(config['dim_x'])):
 	print('\n Please enter the correct number of values for the system parameters \n')
 	sys.exit(0)
 	
-if (len(config['ini_cond']) != int(config['dim_x'])):
+if (len(config['init_cond']) != int(config['dim_x'])):
 	print('\n Please enter the correct number of values for the initial condition \n')
 	sys.exit(0)
 
