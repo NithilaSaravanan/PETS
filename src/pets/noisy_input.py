@@ -12,6 +12,7 @@ package.
 
 import pandas as pd
 import numpy as np
+from scipy.integrate import odeint
 
 """
 Add White noise of choice
@@ -66,12 +67,12 @@ def states_system(a, b, points, x0, aT, std):
     return yM, y, dy, ddy, dddy, t
 
 
+def noisy_signal(a,b,points,ic,param):
+	#Configure this std to add AWGN noise of a set std dev
+	std = 0
+	yM, yT, dyT, ddyT, dddyT, t = states_system(a, b, points, ic, param, std)
+	return(yM,yT,dyT,ddyT,dddyT, std)
 
-def noisy_signal():
-    
-    #get config from config files 
-    Ym = [1,2,3,4,5] # Dirty signal/ measured signal with noise
-    Yt = [1,2,3,4,5] #True signal, without noise (for error calculations)
-    
-    return Ym, Yt
+
+
 
