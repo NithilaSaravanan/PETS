@@ -3,4 +3,13 @@ PETS is a collection of the most commonly used parameter and state estimation to
 
 **For the Authors**
 
-Make changes to your own builds, do not touch the main build yet. Update your own builds and once that is done, we will merge it into beta - then test it out and then make it into main once we are done submitting the thesis.
+New program build in test
+- Checked access to config files
+- checked access to noisy input
+- checked access to src files
+
+TO DO
+- check access to gen inputs
+- change code in gen input to compare the true derivatives as well (maybe in thesis as well)
+- make sure the whole kalman works as a whole
+- integrate with the main run_estimation.py script

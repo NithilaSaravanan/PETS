@@ -51,7 +51,9 @@ def main():
 	choice = input("\n Press y/Y to continue and proceed with the script")
 	
 	if (str.upper(choice) == 'Y'):
+		#Commenting just for Anaconda test
 		select_algo(method_select)
+		#select_algo("kalman_known")
 	else:
 		sys.exit(0)
 	

@@ -8,6 +8,6 @@
 	"q_var":0.000001,
 	"p_val":0.01,
 	"r_val":1,
-	"ini_cond":[1,1,1,1],
-	"res_dir":0
+	"init_cond":[1,1,1,1],
+	"res_dir":"/Users/nithila/Documents/GitHub/PETS/data/"
 }
