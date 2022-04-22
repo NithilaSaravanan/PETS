@@ -48,7 +48,7 @@ def main():
 		sys.exit()
 		
 	print("\n \n Please make sure to have the config file for ", method_select, " algorithm correctly populated and have the true and the noisy signal functions ready in the noisy_signal.py script \n")
-	choice = input("\n Press y/Y to continue and proceed with the script  ")
+	choice = input("\nPress y/Y to continue and proceed with the script  ")
 	
 	if (str.upper(choice) == 'Y'):
 		#Commenting just for Anaconda test

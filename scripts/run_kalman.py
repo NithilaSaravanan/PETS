@@ -55,9 +55,6 @@ def kalman_run():
 	ic = config['init_cond']
 	param = config['a_k']
 
-	#checks
-	#print(len(t),'\n')
-	#print(a,b, points,'\n')
 
 	#Checking order to get the correct call
 	if config['dim_x']==1:
@@ -69,22 +66,6 @@ def kalman_run():
 	elif config['dim_x'] == 4:
 		yM, yT, dyT, ddyT, dddyT, awgn_std  =  noisy_signal(a,b,points,ic,param)
 
-	"""
-	#checks
-	#print(len(yM))
-	#print(len(yT))
-	yE = kalman_algo(config,yM)
-	diff = yE-yT
-	print(np.mean(diff))
-	print(np.max(yM))
-	print(np.max(yT))
-
-	print(np.min(yM))
-	print(np.min(yT))
-
-	THESE WORK!
-
-	"""
 	#Getting clean states based on the order of the system
 	if config['dim_x']==1:
 		yE = kalman_algo(config,yM)
@@ -95,13 +76,6 @@ def kalman_run():
 	elif config['dim_x'] == 4:
 		yE, dyE, ddyE, dddyE = kalman_algo(config,yM)
 
-	"""
-	These checks work!
-	print(len(yE))
-	print(len(dyE))
-	print(len(ddyE))
-	print(len(dddyE))
-	"""
 	print("States have been reconstructed!")
 
 	results_dir = config['res_dir']
