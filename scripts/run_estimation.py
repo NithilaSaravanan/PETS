@@ -9,14 +9,14 @@ appropriate arguments to get the intended output.
 import argparse
 import sys
 import os.path as osp
-import run_kalman
+from run_kalman import kalman_run
 #from run_kalman import kalman_func
 
 this_dir = osp.dirname(__file__)
 
 def select_algo(meth):
 	if meth == 'kalman_known':
-		run_kalman()
+		kalman_run()
 	
 
 def main():
@@ -47,8 +47,8 @@ def main():
 		parser.print_help()
 		sys.exit()
 		
-	print("\n \n Please make sure to have the config file for the corresponding algorithm correctly populated and have the true and the noisy signal functions ready in the noisy_signal.py script")
-	choice = input("\n Press y/Y to continue and proceed with the script")
+	print("\n \n Please make sure to have the config file for ", method_select, " algorithm correctly populated and have the true and the noisy signal functions ready in the noisy_signal.py script \n")
+	choice = input("\n Press y/Y to continue and proceed with the script  ")
 	
 	if (str.upper(choice) == 'Y'):
 		#Commenting just for Anaconda test

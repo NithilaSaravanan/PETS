@@ -6,7 +6,7 @@
 	"dim_x":4,
 	"a_k":[1, 5, 5, 0],
 	"q_var":0.001,
-	"p_val":1,
+	"p_val":10,
 	"r_val":0.1,
 	"init_cond":[0,0,0,1],
 	"res_dir":"/Users/nithila/Documents/GitHub/PETS/data/test2/"

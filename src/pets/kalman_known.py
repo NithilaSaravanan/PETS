@@ -1,12 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Created on Wed Jan 12 19:54:18 2022
 
-Src script for running kalman + rts. takes i/p from run_kalman.py and send back the results to run_kalman.py
-
-@author: nithila
-"""
 import numpy as np
 import sys
 from scipy.linalg import expm
@@ -14,9 +8,7 @@ from scipy.linalg import expm
 from filterpy.kalman import KalmanFilter
 from filterpy.common import Q_discrete_white_noise
 
-
-#Function that actually performs the Kalman filtering and returns the clean signal back to the
-#the original funciton 
+#only requires the config file and the measured signal - no need for the true signal here
 def kalman_algo(config,yM):
 	dimx = config['dim_x']
 	ak = config['a_k']
@@ -72,7 +64,7 @@ def kalman_algo(config,yM):
 	
 	kf.Q = Q_discrete_white_noise(dim = dimx, dt = w_length, var= float(config['q_var']))
 	kf.P = float(config['p_val'])* np.eye(dimx) # Initial condition for covariance
-	kf.x = np.array(config['ini_cond']) # initial conditions
+	kf.x = np.array(config['init_cond']) # initial conditions
 	kf.R = float(config['r_val'])# Measurement noise
 
 
@@ -84,5 +76,13 @@ def kalman_algo(config,yM):
 	    
 	mu, cov,bf1,bf2 = kf.batch_filter(yM, Rs =Rs, Fs = Fs, Hs = Hs, Qs = Qs)
 	M,P,C, rts1 = kf.rts_smoother(mu, cov, Fs = Fs, Qs = Qs)
-	
-	return (M)
+
+	if dimx ==1:
+		return(M[:,0])
+	elif dimx == 2:
+		return(M[:,0], M[:,1])
+	elif dimx == 3:
+		return(M[:,0], M[:,1], M[:,2])
+	elif dimx == 4:
+		return(M[:,0], M[:,1], M[:,2], M[:,3])
+
