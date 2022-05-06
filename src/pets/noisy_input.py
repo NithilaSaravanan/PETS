@@ -70,6 +70,7 @@ def states_system(a, b, points, x0, aT, std):
 def noisy_signal(a,b,points,ic,param):
 	#Configure this std to add AWGN noise of a set std dev
 	std = 0
+	ic = ic[:4]
 	yM, yT, dyT, ddyT, dddyT, t = states_system(a, b, points, ic, param, std)
 	return(yM,yT,dyT,ddyT,dddyT, std)
 

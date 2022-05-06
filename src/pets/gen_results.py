@@ -2,9 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on Tue Jan 18 03:46:27 2022
-
 This code can be used to generate outputs, store the values of the clean signal and the errors assocaited with them
-
 @author: nithila
 """
 
@@ -266,4 +264,3 @@ def results4(yM, yT, dyT, ddyT, dddyT, yE, dyE, ddyE, dddyE, t, results_dir, awg
 	
 	state_df = pd.DataFrame.from_dict(state_dict)
 	state_df.to_csv(rw2_dir, sep='\t', encoding='utf-8', index = False)
-

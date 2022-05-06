@@ -10,20 +10,24 @@ import argparse
 import sys
 import os.path as osp
 from run_kalman import kalman_run
-#from run_kalman import kalman_func
+from run_kalmanukf import kalmanukf_run
 
 this_dir = osp.dirname(__file__)
 
 def select_algo(meth):
 	if meth == 'kalman_known':
 		kalman_run()
-	
+	elif meth == 'kalman_ukf':
+		kalmanukf_run()
+	else:
+		print("Please select a correct algorithm \n")
+		sys.exit(0)	
 
 def main():
     
 	parser = argparse.ArgumentParser()
 	#parser.add_argument('-c', help = 'Enter the configuration file with all the tunable parameters for the method selected', default = 'nope')
-	parser.add_argument('-m', help = 'Select the estimation method you want to use (ADD VALS HERE)', default = 'nope')
+	parser.add_argument('-m', help = 'Select the estimation method you want to use - kalman_known, kalman_ukf, TWO MORE OPTIONS HERE!  ', default = 'nope')
 	#parser.add_argument('-g',help = 'Select whether you want graphs in the output directory (Y / N)',default = 'Y')
 	try:
 		args = parser.parse_args()
@@ -47,7 +51,7 @@ def main():
 		parser.print_help()
 		sys.exit()
 		
-	print("\n \n Please make sure to have the config file for ", method_select, " algorithm correctly populated and have the true and the noisy signal functions ready in the noisy_signal.py script \n")
+	print("\nPlease make sure to have the config file for", method_select, "algorithm correctly populated and have the true and the noisy signal functions ready in the noisy_signal.py script. The program will exit if you did not enter the correct name for the algorithm. Please refer to help to know about all the options \n")
 	choice = input("\nPress y/Y to continue and proceed with the script  ")
 	
 	if (str.upper(choice) == 'Y'):
