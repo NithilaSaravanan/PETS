@@ -65,9 +65,8 @@ def kalmanukf_run():
 	elif config['dim_x'] == 4:
 		yM, yT, dyT, ddyT, dddyT, awgn_std  =  noisy_signal(a,b,points,ic,param)
 	
-	print(len(dddyT), awgn_std)
 	
 	print("To do -> code the new kalmanukf algo, test it, test the gen_results and then output the found parameters on the screen!")
-	kalmanukf_algo()
+	kalmanukf_algo(config,yM)
 
 
