@@ -66,7 +66,30 @@ def kalmanukf_run():
 		yM, yT, dyT, ddyT, dddyT, awgn_std  =  noisy_signal(a,b,points,ic,param)
 	
 	
-	print("To do -> code the new kalmanukf algo, test it, test the gen_results and then output the found parameters on the screen!")
-	kalmanukf_algo(config,yM)
+	#Getting clean states based on the order of the system
+	if config['dim_x']==1:
+		yE = kalmanukf_algo(config,yM)
+	elif config['dim_x'] == 2:
+		yE, dyE = kalmanukf_algo(config,yM)
+	elif config['dim_x'] == 3:
+		yE, dyE, ddyE = kalmanukf_algo(config,yM)
+	elif config['dim_x'] == 4:
+		yE, dyE, ddyE, dddyE = kalmanukf_algo(config,yM)
+
+	print("States have been reconstructed!")
+
+	results_dir = config['res_dir']
+
+	#sending true and estimated signals for calculations and graphing
+	if config['dim_x']==1:
+		results1(yM, yT, yE, t, results_dir, awgn_std)
+	elif config['dim_x'] == 2:
+		results2(yM, yT, dyT, yE, dyE, t, results_dir, awgn_std)
+	elif config['dim_x'] == 3:
+		results3(yM, yT, dyT, ddyT, yE, dyE, ddyE, t, results_dir, awgn_std)
+	elif config['dim_x'] == 4:
+		results4(yM, yT, dyT, ddyT, dddyT, yE, dyE, ddyE, dddyE, t, results_dir, awgn_std)
+
+	print("All plots, metrics and value dumps have been saved at ", results_dir)
 
 

@@ -88,6 +88,38 @@ def kalmanukf_algo(config,yM):
 	kf.R *= float(config['r_val'])
 	kf.x = np.array(config['init_cond'])
 
-	print(kf.Q,kf.P, kf.R, kf.x)
+	#print(kf.Q,kf.P, kf.R, kf.x)
+
+	mu, cov = kf.batch_filter(yM)
+	M,P,C = kf.rts_smoother(mu, cov)
+
+	#printing the parameters to stdout only - not printing them to a txt file
+	print("\n")
+	if dimx ==1:
+		print("The average parameter value of the system is estimated to be ",np.mean( M[:,1]))
+		print("The actual true parameter value of the system is ",config['a_k'] )
+	elif dimx == 2:
+		print("The average parameter values of the system are estimated to be ",np.mean( M[:,2]), np.mean(M[:,3]))
+		print("The actual true parameter values of the system are ",config['a_k'] )
+	elif dimx == 3:
+		print("The average parameter values of the system are estimated to be ",np.mean( M[:,3]), np.mean(M[:,4]),np.mean(M[:,5]))
+		print("The actual true parameter values of the system are ",config['a_k'] )
+	elif dimx == 4:
+		print("The average parameter values of the system are estimated to be ",np.mean( M[:,4]), np.mean(M[:,5]), np.mean(M[:,6]), np.mean(M[:,7]))
+
+		print("The actual true parameter values of the system are ",config['a_k'] )
+
+
+	#returning the estimated parameters from the algorithm
+	
+	if dimx ==1:
+		return(M[:,0])
+	elif dimx == 2:
+		return(M[:,0], M[:,1])
+	elif dimx == 3:
+		return(M[:,0], M[:,1], M[:,2])
+	elif dimx == 4:
+		return(M[:,0], M[:,1], M[:,2], M[:,3])	
+
 
 

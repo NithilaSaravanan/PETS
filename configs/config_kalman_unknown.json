@@ -1,5 +1,5 @@
 {
-	"dt_length":0.0001,
+	"dt_length":0.00001,
 	"a":0,
 	"b":6,
 	"points":20000,
@@ -7,11 +7,11 @@
 	"\\parameter_comment":"true values are required to compare them against the estimated parameters" ,
 	"a_k":[1, 5, 5, 0],
 	"q_var":0.000001,
-	"p_val":2,
-	"r_val":1,
+	"p_val":1,
+	"r_val":0.1,
 	"init_cond":[0,0,0,1,0,0,0,0],
 	"\\init_cond_comment":"remember to provide the inital conditions for the combined/augmented state vector" ,
-	"alpha":0.001,
+	"alpha":0.0001,
 	"beta":2,
 	"kappa":0,
 	"res_dir":"/Users/nithila/Documents/GitHub/PETS/data/test2/"
