@@ -1,5 +1,10 @@
 # PETs
-PETs is a collection of the most commonly used parameter and state estimation tools including a new and revolutionary kernel based estimation process developed by Dr. Michalska and her research students at McGill University, Canada.
+***Python Estimation Toolkits (PETs)*** is an agile and capable estimation library that was developed by Manoj Krishna Venkatesan and Nithilasaravanan Kuppan as part of their Master's thesis at McGill University, Montreal, Canada. **PETs** stands as a testament to the years of intense research conducted by Dr. Michalska and her graduate students - the authors have tried their best to include the essential parts of all this research as a single, *easy-to-use* package.
+
+### What is PETs?
+
+***PETs*** is a Python-based state and parameter estimation library consisting of 4 different methods to perform estimation of SISO LTI systems. 
+
 
 **For the Authors**
 
