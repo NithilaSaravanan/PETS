@@ -3,7 +3,11 @@
 ***Python Estimation Toolkits (PETs)*** is an agile and capable estimation library that was developed by Manoj Krishna Venkatesan and Nithilasaravanan Kuppan as part of their Master's thesis at McGill University, Montreal, Canada. **PETs** stands as a testament to the years of intense research conducted by Dr. Michalska and her graduate students - the authors have tried their best to include the essential parts of all this research as a single, *easy-to-use* package.
 
 ### What is PETs?
-***PETs*** is a Python-based state and parameter estimation library consisting of 4 different methods to perform estimation of SISO LTI systems. A detailed account of all the methods - their working, their logic, and an incisive comparison of their performances under different conditions have been presented in the authors' thesis documents under the *resources* folder. Below is a summary of the options available
+***PETs*** is a Python-based state and parameter estimation library consisting of 4 different methods to perform estimation of SISO LTI systems. A detailed account of all the methods - their working, their logic, and an incisive comparison of their performances under different conditions have been presented in the authors' thesis documents under the *resources* folder.
+You can install all the required libraries by simply 
+> pip install requirements.txt
+
+ Below is a summary of the options available:
 
  - `kernel_projection`:  Uses the kernel method to estimate both the system parameters
 which are then used by the projection method to estimate the states
