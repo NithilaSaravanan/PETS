@@ -189,7 +189,7 @@ def results3(yM, yT, dyT, ddyT, yE, dyE, ddyE, t, results_dir, awgn_std):
 
 #generating output for a 4th order system -> dimx = 4
 #other functions in this script are based on this function
-def results4(yM, yT, dyT, ddyT, dddyT, yE, dyE, ddyE, dddyE, t, results_dir, awgn_std):
+def results4(yM, yT, dyT, ddyT, dddyT, yE, dyE, ddyE, dddyE, t, results_dir):
 	
 	print('Graphs are being plotted!')
 	

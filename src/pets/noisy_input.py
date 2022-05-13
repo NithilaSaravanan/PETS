@@ -17,7 +17,7 @@ from scipy.integrate import odeint
 """
 Add White noise of choice
 """
-def add_AWGN(y, t, std):
+def add_awgn(y, t, std):
     N = t.shape[0]    
     #noise = np.random.randn()(0, std, size = N)
     rng = np.random.default_rng()
@@ -27,53 +27,29 @@ def add_AWGN(y, t, std):
 """
 System Modelling (4th order LTI)
 """
-def states_system(a, b, points, x0, aT, std):    
-    #Model 4th Order System
-    def model(x,t):
-        x1 = x[0]
-        x2 = x[1]
-        x3 = x[2]
-        x4 = x[3]
-        dx1dt = x2
-        dx2dt = x3
-        dx3dt = x4
-        dx4dt = (-aT[0])*x1 + (-aT[1])*x2 + (-aT[2])*x3 + (-aT[3])*x4
-        dxdt = [dx1dt, dx2dt, dx3dt, dx4dt]
-        return dxdt
+# Function declaration 
 
-    #Solve ODE
-    def solve_ODE(t, x0, T):
-        yT = np.empty_like(t)
-        dyT = np.empty_like(t)
-        ddyT = np.empty_like(t)
-        dddyT = np.empty_like(t)
-        yT[0] = x0[0] #set initial condition 
-        dyT[0] = x0[1]
-        ddyT[0] = x0[2]
-        dddyT[0] = x0[3]
-        for i in range(1,T):
-            t_span = [t[i-1], t[i]]
-            x = odeint(model, x0, t_span)
-            yT[i] = x[1][0] #Store solution
-            dyT[i] = x[1][1]
-            ddyT[i] = x[1][2]
-            dddyT[i] = x[1][3]
-            x0 = x[1] #Next initial condition
-        return yT, dyT, ddyT, dddyT
+def state_space(x,t,A, B):
+    """State Space Model"""
     
-    t = np.linspace(a, b, points)
-    y, dy, ddy, dddy = solve_ODE(t,x0, points)
-    yM = add_AWGN(y, t, std)
-    return yM, y, dy, ddy, dddy, t
+    y_out = np.matmul(A,x)
+    return y_out
 
 
 def noisy_signal(a,b,points,ic,param):
-	#Configure this std to add AWGN noise of a set std dev
-	std = 0
-	ic = ic[:4]
-	yM, yT, dyT, ddyT, dddyT, t = states_system(a, b, points, ic, param, std)
-	return(yM,yT,dyT,ddyT,dddyT, std)
+    #Configure this std to add AWGN noise of a set std dev
+    noise_std = 1
+    t = np.linspace(a, b, points)
+    # Solve ODE
+    ak = np.array((param))
+    dim = len(ak)
 
-
-
-
+    A = np.zeros((dim, dim))
+    A[-1,:] = -(ak)
+    for i in range(dim, 1, -1):
+        A[-i, -i+1] = 1
+    B = np.array([])
+    y_arr_true = odeint(state_space, ic, t, args=(A,B))
+    y = y_arr_true[:,0]
+    y_noise = add_awgn(y, t, noise_std)
+    return y_arr_true, y_noise, noise_std

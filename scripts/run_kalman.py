@@ -9,7 +9,7 @@ sys.path.append(osp.join(osp.dirname(__file__), '..', 'src'))
 from pets.noisy_input import noisy_signal
 
 #Importing the kalman func from src/pets
-from pets.kalman_known import kalman_algo
+from pets.kalman import kalman_algo
 
 #Importing the results functions from src/pets
 from pets.gen_results import results4
@@ -66,7 +66,7 @@ def kalman_run():
 	elif config['dim_x'] == 3:
 		yM, yT, dyT, ddyT, awgn_std = noisy_signal(a,b,points,ic,param)
 	elif config['dim_x'] == 4:
-		yM, yT, dyT, ddyT, dddyT, awgn_std  =  noisy_signal(a,b,points,ic,param)
+		y_arr_true, yM, awgn_std  =  noisy_signal(a,b,points,ic,param)
 
 	#Getting clean states based on the order of the system
 	if config['dim_x']==1:
@@ -76,7 +76,7 @@ def kalman_run():
 	elif config['dim_x'] == 3:
 		yE, dyE, ddyE = kalman_algo(config,yM)
 	elif config['dim_x'] == 4:
-		yE, dyE, ddyE, dddyE = kalman_algo(config,yM)
+		y_arr_est = kalman_algo(config,yM, np.array(param))
 
 	print("States have been reconstructed!")
 
@@ -84,13 +84,14 @@ def kalman_run():
 
 	#sending true and estimated signals for calculations and graphing
 	if config['dim_x']==1:
-		results1(yM, yT, yE, t, results_dir, awgn_std)
+		results1(yM, y_arr_true[:,0], yE, t, results_dir, awgn_std)
 	elif config['dim_x'] == 2:
-		results2(yM, yT, dyT, yE, dyE, t, results_dir, awgn_std)
+		results2(yM, y_arr_true[:,0], y_arr_true[:,1], yE, dyE, t, results_dir, awgn_std)
 	elif config['dim_x'] == 3:
-		results3(yM, yT, dyT, ddyT, yE, dyE, ddyE, t, results_dir, awgn_std)
+		results3(yM, y_arr_true[:,0], y_arr_true[:,1], y_arr_true[:,2], yE, dyE, ddyE, t, results_dir, awgn_std)
 	elif config['dim_x'] == 4:
-		results4(yM, yT, dyT, ddyT, dddyT, yE, dyE, ddyE, dddyE, t, results_dir, awgn_std)
+		results4(yM, y_arr_true[:,0], y_arr_true[:,1], y_arr_true[:,2], y_arr_true[:,3], \
+			y_arr_est[:,0], y_arr_est[:,1], y_arr_est[:,2], y_arr_est[:,3], t, results_dir)
 
 	print("All plots, metrics and value dumps have been saved at ", results_dir)
 

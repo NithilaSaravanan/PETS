@@ -1,0 +1,16 @@
+{
+	"dt_length":0.001,
+	"a":0,
+	"b":6,
+	"points":20000,
+	"dim_x":4,
+	"knots":500,
+	"tol":0.01,
+	"w_mat":1000000,
+	"a_k":[1, 5, 5, 0],
+	"q_var":0.000000001,
+	"p_val":1,
+	"r_val":0.000001,
+	"init_cond":[0,0,0,1],
+	"res_dir":"/home/mk/Documents/thesis/git/PETS/data/test2"
+}
