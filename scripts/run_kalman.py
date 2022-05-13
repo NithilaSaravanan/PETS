@@ -57,41 +57,19 @@ def kalman_run():
 	ic = config['init_cond']
 	param = config['a_k']
 
-
-	#Checking order to get the correct call
-	if config['dim_x']==1:
-		yM,yT, awgn_std = noisy_signal(a,b,points,ic,param)
-	elif config['dim_x'] == 2:
-		yM, yT, dyT, awgn_std = noisy_signal(a,b,points,ic,param)
-	elif config['dim_x'] == 3:
-		yM, yT, dyT, ddyT, awgn_std = noisy_signal(a,b,points,ic,param)
-	elif config['dim_x'] == 4:
-		y_arr_true, yM, awgn_std  =  noisy_signal(a,b,points,ic,param)
+    
+	y_arr_true, yM, awgn_std  =  noisy_signal(a,b,points,ic,param)
 
 	#Getting clean states based on the order of the system
-	if config['dim_x']==1:
-		yE = kalman_algo(config,yM)
-	elif config['dim_x'] == 2:
-		yE, dyE = kalman_algo(config,yM)
-	elif config['dim_x'] == 3:
-		yE, dyE, ddyE = kalman_algo(config,yM)
-	elif config['dim_x'] == 4:
-		y_arr_est = kalman_algo(config,yM, np.array(param))
+	y_arr_est = kalman_algo(config,yM, np.array(param))
 
 	print("States have been reconstructed!")
 
 	results_dir = config['res_dir']
 
 	#sending true and estimated signals for calculations and graphing
-	if config['dim_x']==1:
-		results1(yM, y_arr_true[:,0], yE, t, results_dir, awgn_std)
-	elif config['dim_x'] == 2:
-		results2(yM, y_arr_true[:,0], y_arr_true[:,1], yE, dyE, t, results_dir, awgn_std)
-	elif config['dim_x'] == 3:
-		results3(yM, y_arr_true[:,0], y_arr_true[:,1], y_arr_true[:,2], yE, dyE, ddyE, t, results_dir, awgn_std)
-	elif config['dim_x'] == 4:
-		plot_results(yM, y_arr_true, y_arr_est, t, results_dir)
-		generate_error_metrics(y_arr_true, y_arr_est, results_dir)
+	plot_results(yM, y_arr_true, y_arr_est, t, results_dir)
+	generate_error_metrics(y_arr_true, y_arr_est, results_dir)
 
 	print("All plots, metrics and value dumps have been saved at ", osp.abspath(results_dir))
 
