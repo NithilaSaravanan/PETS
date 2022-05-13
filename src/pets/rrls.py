@@ -338,6 +338,166 @@ def get_OLS(y, t, a, b, n_low, n_max, order):
     a_OLS = np.matmul(np.linalg.pinv(P_OLS), Q_OLS)
     return a_OLS
 
+"""
+Reconstruct derivatives
+"""
+def get_KF_derivative(y_tau, tau, ti, a, n, p, ak):
+    f = np.math.factorial
+    d_t = np.array(ti - tau)
+    d_a = np.array(tau - a)
+    
+    K1 = np.zeros(tau.shape[0])
+    for j in range(1, p+1):
+        sign = (-1.0)**(j + n - p + 1)
+        comb = combination(n, n-p+j)
+        num = np.array(f(n)*(d_t**(j - 1))*(d_a**(p - j)))
+        den = f(p - j)*f(j - 1)
+        K1 += np.array(sign*comb*num/den)
+
+    K2 = np.zeros(tau.shape[0])
+    for i in range(0, p):
+        K2_j = np.zeros(tau.shape[0])
+        for j in range(0, i+1):
+            sign = (-1.0)**(j+1)
+            comb = combination(i, j)
+            num = np.array(f(n)*(d_t**(p-i+j-1))*((d_a)**(n-j)))
+            den = f(n-j)*f(p-i+j-1)
+            K2_j += np.array(sign*comb*num/den)
+        K2 += np.array(ak[i]*(K2_j))
+        
+    K3 = np.zeros(tau.shape[0])
+    for i in range(p, n):
+        K3_j = np.zeros(tau.shape[0])
+        for j in range(1, p+1):
+            sign = (-1.0)**(j+i-p+1)
+            comb = combination(i, i - p +j)
+            num = np.array(f(n)*(d_t**(j-1))*(d_a**(n-i+p-j)))
+            den = f(n-i+p-j)*f(j-1)
+            K3_j += np.array(sign*comb*num/den)
+        K3 += np.array(ak[i]*(K3_j))
+    KF = np.array(K1 + K2 + K3)
+    
+    integrand = np.multiply(KF, y_tau)
+    integral = np.trapz(integrand, tau)
+    return integral
+
+
+def get_KB_derivative(y_tau, tau, ti, b, n, p, ak):
+    f = np.math.factorial
+    d_t = np.array(ti - tau)
+    d_b = np.array(b - tau)
+    
+    K1 = np.zeros(tau.shape[0])
+    for j in range(1, p+1):
+        sign = 1.0
+        comb = combination(n, n-p+j)
+        num = np.array(f(n)*(d_t**(j - 1))*(d_b**(p - j)))
+        den = f(p - j)*f(j - 1)
+        K1 += np.array(sign*comb*num/den)
+    
+    K2 = np.zeros(tau.shape[0])
+    for i in range(0, p):
+        K2_j = np.zeros(tau.shape[0])
+        for j in range(0, i+1):
+            sign = 1.0
+            comb = combination(i, j)
+            num = np.array(f(n)*(d_t**(p-i+j-1))*((d_b)**(n-j)))
+            den = f(n-j)*f(p-i+j-1)
+            K2_j += np.array(sign*comb*num/den)
+        K2 += np.array(ak[i]*(K2_j))
+        
+    K3 = np.zeros(tau.shape[0])
+    for i in range(p, n):
+        K3_j = np.zeros(tau.shape[0])
+        for j in range(1, p+1):
+            sign = 1.0
+            comb = combination(i, i - p +j)
+            num = np.array(f(n)*(d_t**(j-1))*(d_b**(n-i+p-j)))
+            den = f(n-i+p-j)*f(j-1)
+            K3_j += np.array(sign*comb*num/den)
+        K3 += np.array(ak[i]*(K3_j))
+        
+    KB = np.array(K1 + K2 + K3)
+    
+    integrand = np.multiply(KB, y_tau)
+    integral = np.trapz(integrand, tau)    
+    
+    return integral
+
+
+def combination(upper, lower):
+    f = np.math.factorial
+    comb = (f(upper)/(f(lower)*f(upper - lower)))
+    return comb
+
+
+def get_yE_k(y, t, sample_points, a, b, ak, n):
+    f = np.math.factorial
+    k = 1
+    
+    yk, tk = get_uniform_batch(y, t, sample_points)
+    
+    yE_k = np.zeros(sample_points+1)
+    p = n - k
+    for idx in range(0, sample_points+1):
+        yi = np.array(yk[idx])
+        ti = np.array(tk[idx])
+        y_F, y_B, tau_F, tau_B = get_tau(y, t, ti)
+
+        d_a = np.array(ti - a)
+        d_b = np.array(b - ti)
+
+        alpha = np.array(1/(((ti - a)**n) + ((b - ti)**n)))
+
+        y1 = np.array([0.0])
+        for i in range(1, k+1):
+            sign = np.array((-1.0)**(i+1))
+            comb = combination(p + i - 1, i)
+            num = np.array(f(n)*(d_a**(n-i))*(yk[idx]))
+            den = np.array(f(n-i))
+            y1 += np.array(sign*comb*num/den)
+
+        y2 = np.array([0.0])
+        for i in range(p, n):
+            y2_j = np.array([0.0])
+            for j in range(0, i - p + 1):
+                sign = np.array(-1.0**(j+1))
+                comb = combination(p+j-1, j)
+                num = np.array(f(n)*(d_a**(n-j))*(yk[idx]))
+                den  = np.array(f(n - j))
+                y2_j += np.array(sign*comb*num/den)
+            y2 += np.array(ak[i]*(y2_j))
+
+        y3 = get_KF_derivative(y_F, tau_F, ti, a, n, p, ak)
+
+        y4 = np.array([0.0])
+        for i in range(1, k+1):
+            sign = np.array(1.0)
+            comb = combination(p + i - 1, i)
+            num = np.array(f(n)*(d_b**(n-i))*(yk[idx]))
+            den = np.array(f(n-i))
+            y4 += np.array(sign*comb*num/den)
+
+        y5 = np.array([0.0])
+        for i in range(p, n):
+            y5_j = np.array([0.0])
+            for j in range(0, i - p + 1):
+                sign = np.array(1.0)
+                comb = combination(p+j-1, j)
+                num = np.array(f(n)*(d_b**(n-j))*(yk[idx]))
+                den  = np.array(f(n - j))
+                y5_j += np.array(sign*comb*num/den)
+            y5 += np.array(ak[i]*(y5_j))            
+
+        y6 = get_KB_derivative(y_B, tau_B, ti, b, n, p, ak)
+
+        yE_k[idx] = np.array(alpha*(y1 + y2 + y3 - y4 - y5 + y6))   
+        
+    yE_k_interpolated = np.interp(t, tk, yE_k)
+    
+    return yE_k_interpolated
+
+
 def rrls_solver (y, t, a, b, knots, tol, Stype,w_delta, order):
     
     iteration = 0
@@ -389,3 +549,18 @@ def rrls_solver (y, t, a, b, knots, tol, Stype,w_delta, order):
         print(iteration,ak)
         
     return ak
+
+
+def projection_algo(config, y_measured,t, ak):
+    
+    x_dim = config['dim_x']
+    a = config['a']
+    b = config['b']
+    x_smooth = np.zeros((len(y_measured), x_dim))
+    x_smooth[:,0] = reconstruct_state(y_measured,t,ak,x_dim)
+    
+    
+    for idx in range(1, x_dim):
+        x_smooth[:,idx] = get_yE_k(x_smooth[:,(idx-1)], t, 100, a, b, ak, x_dim)
+    
+    return x_smooth
