@@ -5,10 +5,12 @@ Created on Fri May 13 05:52:48 2022
 
 @author: mk
 """
-
+import os
 import numpy as np
 np.set_printoptions(suppress=True)
-import math 
+import json
+import math
+import pandas as pd 
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 import matplotlib.pyplot as plt
 
@@ -36,7 +38,7 @@ def plot_input_signal (y_true, y_measured, t, results_dir):
     plt.xlabel('time')
     plt.ylabel('y(t)')
     plt.legend(loc='best')
-    plt.savefig(r1_dir)
+    plt.savefig(os.path.abspath(r1_dir))
     plt.show()
     return
 
@@ -47,7 +49,7 @@ def plot_y_estimates (y_true, y_est, t, results_dir):
     plt.xlabel('time')
     plt.ylabel('y(t)')
     plt.legend(loc='best')
-    plt.savefig(r0_dir)
+    plt.savefig(os.path.abspath(r0_dir))
     plt.show()
     
     for idx in range(1,len(y_true[0,:])):
@@ -57,7 +59,7 @@ def plot_y_estimates (y_true, y_est, t, results_dir):
         plt.xlabel('time')
         plt.ylabel("$\mathregular{y^{(%d)}}$t" %idx)
         plt.legend(loc='best')
-        plt.savefig(rn_dir)
+        plt.savefig(os.path.abspath(rn_dir))
         plt.show()
 
     return
@@ -65,4 +67,37 @@ def plot_y_estimates (y_true, y_est, t, results_dir):
 def plot_results(y_measured, y_true, y_est,t, results_dir):
     plot_input_signal(y_true[:,0], y_measured, t, results_dir)
     plot_y_estimates(y_true, y_est, t, results_dir)
+    
+    #dump all values in a tsv file
+    rw2_dir = results_dir + "state_estimates.tsv"
+    
+    state_dict = {'y_measured' : y_measured,
+                  'y_true'     : y_true[:,0],
+                  'y_est'      : y_est[:,0]}
+    
+    for idx in range(1,len(y_true[0,:])):
+        key_prefix = 'd'+str(idx)
+        state_dict[key_prefix+'y_true'] = y_true[:,idx]
+        state_dict[key_prefix+'y_est'] = y_est[:,idx]
+        
+    state_df = pd.DataFrame.from_dict(state_dict)
+    state_df.to_csv(rw2_dir, sep='\t', encoding='utf-8', index = False)
+        
+    
+def generate_error_metrics(y_true, y_est, results_dir):
+    rw1_dir = results_dir + "rmse_mad_mae.txt"
+    metric_dict = {'y_rmse':find_mse(y_est[:,0],y_true[:,0]),
+                   'y_mad':find_mad(y_est[:,0],y_true[:,0]),
+                   'y_mae':find_mae(y_est[:,0],y_true[:,0])}
+    
+    for idx in range(1,len(y_true[0,:])):
+        key_prefix = 'd'+str(idx)
+        metric_dict[key_prefix+'y_mse'] = find_mse(y_est[:,idx],y_true[:,idx])
+        metric_dict[key_prefix+'y_mad'] = find_mad(y_est[:,idx],y_true[:,idx])
+        metric_dict[key_prefix+'y_mae'] = find_mae(y_est[:,idx],y_true[:,idx])
+        
+    with open(os.path.abspath(rw1_dir),'w') as data: 
+        json.dump(metric_dict, data, indent=2)
+
+    
     
