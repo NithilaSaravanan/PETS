@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import sys
+import os.path as osp
+sys.path.append(osp.join(osp.dirname(__file__), '..', 'src'))
+
 #Importing the noisy function
 from pets.noisy_input import noisy_signal
 
@@ -11,8 +15,6 @@ from pets.kalman_unknown import kalmanukf_algo
 from pets.gen_results import results4
 
 import json
-import sys
-import os.path as osp
 import numpy as np
 
 this_dir = osp.dirname(__file__)
