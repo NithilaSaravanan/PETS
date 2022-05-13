@@ -12,7 +12,7 @@ sys.path.append(osp.join(osp.dirname(__file__), '..', 'src'))
 from pets.rrls import rrls_solver
 from pets.noisy_input import noisy_signal
 from pets.kalman import kalman_algo
-from pets.gen_results import results4
+from pets.results import plot_results
 
 import json
 import numpy as np
@@ -64,15 +64,14 @@ def kernel_kalman():
     tol = config['tol']
     results_dir = config['res_dir']
     # Get noisy signal
-    y_arr_true, y_noise, awgn_std = noisy_signal(a, b, points, ic, param)
+    y_arr_true, y_measured = noisy_signal(a, b, points, ic, param)
 
     # Estimate parameters using RRLS algorithm
-    #ak = rrls_solver(y_noise, t, a, b, knots, tol, "diagonal", w_mat , order)
+    #ak = rrls_solver(y_measured, t, a, b, knots, tol, "diagonal", w_mat , order)
     ak = np.array(param)
     print(ak)
     
-    y_arr_est = kalman_algo(config, y_noise, ak)
-    results4(y_noise, y_arr_true[:,0], y_arr_true[:,1], y_arr_true[:,2], y_arr_true[:,3], \
-             y_arr_est[:,0], y_arr_est[:,1], y_arr_est[:,2], y_arr_est[:,3], t, results_dir)
+    y_arr_est = kalman_algo(config, y_measured, ak)
+    plot_results(y_measured, y_arr_true, y_arr_est, t, results_dir)
     
     

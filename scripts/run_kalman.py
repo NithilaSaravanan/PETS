@@ -12,7 +12,7 @@ from pets.noisy_input import noisy_signal
 from pets.kalman import kalman_algo
 
 #Importing the results functions from src/pets
-from pets.gen_results import results4
+from pets.results import plot_results
 
 import json
 import numpy as np
@@ -90,8 +90,7 @@ def kalman_run():
 	elif config['dim_x'] == 3:
 		results3(yM, y_arr_true[:,0], y_arr_true[:,1], y_arr_true[:,2], yE, dyE, ddyE, t, results_dir, awgn_std)
 	elif config['dim_x'] == 4:
-		results4(yM, y_arr_true[:,0], y_arr_true[:,1], y_arr_true[:,2], y_arr_true[:,3], \
-			y_arr_est[:,0], y_arr_est[:,1], y_arr_est[:,2], y_arr_est[:,3], t, results_dir)
+		plot_results(yM, y_arr_true, y_arr_est, t, results_dir)
 
 	print("All plots, metrics and value dumps have been saved at ", results_dir)
 
