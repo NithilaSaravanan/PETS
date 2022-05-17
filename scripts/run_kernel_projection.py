@@ -69,14 +69,15 @@ def kernel_projection():
     order = config['dim_x']
     knots = config['knots']
     tol = config['tol']
+    s_type = config['s_type']
     results_dir = config['res_dir']
 
     # Retreive the noisy signal, the true signal and the noise standard deviation values.
     y_arr_true, y_measured, awgn_std = noisy_signal(a, b, points, ic, param)
 
     # Estimate parameters using RRLS algorithm
-    #ak = rrls_solver(y_measured, t, a, b, knots, tol, "diagonal", w_mat , order)
-    ak = np.array(param)
+    ak = rrls_solver(y_measured, t, a, b, knots, tol, s_type, w_mat , order)
+    #ak = np.array(param)
     print("The estimated parameters are :", ak)
     
     # Estimate the states, using the Projection algorithm.

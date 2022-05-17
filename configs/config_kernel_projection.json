@@ -7,6 +7,8 @@
 	"knots":500,
 	"tol":0.01,
 	"w_mat":1000000,
+	"s_type":"diagonal",
+	"sample_points":100,
 	"a_k":[1, 10, 0],
 	"init_cond":[0,0,1],
 	"res_dir":"../data/"

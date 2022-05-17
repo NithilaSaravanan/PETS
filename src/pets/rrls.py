@@ -1,15 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Wed May  4 22:15:39 2022
+This file contains the source code to execute RRLS and Projection algorithm. 
 
-@author: mk
+@author: manoj
 """
 
 import numpy as np
 from scipy import integrate
 
+
 def get_batch(y, t, knots, iteration, mode="random"):
+
     np.random.seed(iteration)
     
     if mode == "random":
@@ -23,6 +25,7 @@ def get_batch(y, t, knots, iteration, mode="random"):
         return t_knots
 
 def get_tau(y, t, ti):
+
     F_indices = np.where(t <= ti)[0]
     B_indices = np.where(t > ti)[0]
     y_F = y[F_indices]
@@ -32,6 +35,7 @@ def get_tau(y, t, ti):
     return y_F, y_B, tau_F, tau_B
 
 def get_alpha_tau(ti, tau_F, tau_B, a, b, n, order):
+
     f = np.math.factorial
     
     #Calculate alpha forward
@@ -49,6 +53,7 @@ def get_alpha_tau(ti, tau_F, tau_B, a, b, n, order):
     return alpha
 
 def get_KFn_vector(ti, tau_F, a, n, order):
+
     if tau_F.size == 1:
         tau_F = np.array([tau_F])
     N_tau = tau_F.shape[0]
@@ -81,6 +86,7 @@ def get_KFn_vector(ti, tau_F, a, n, order):
 
 
 def get_KBn_vector(ti, tau_B, b, n,order):
+
     if tau_B.size == 1:
         tau_B = np.array([tau_B])
     N_tau = tau_B.shape[0]
@@ -114,6 +120,7 @@ def get_KBn_vector(ti, tau_B, b, n,order):
     return zeta
 
 def get_KDSn(ti, tau_F, tau_B, a, b, n, ak, order):
+
     N = order+1
     beta = np.concatenate((ak, 1), axis = None)
     beta = beta.reshape(N,1)
@@ -498,8 +505,26 @@ def get_yE_k(y, t, sample_points, a, b, ak, n):
     return yE_k_interpolated
 
 
-def rrls_solver (y, t, a, b, knots, tol, Stype,w_delta, order):
-    
+def rrls_solver (y, t, a, b, knots, tol, stype, w_delta, order):
+    """
+    This function must be called by the user to estimate the 
+    parameters of the SISO LTI homogeneous systems.
+
+    parameters:
+
+    @y          -   measured or noisy signal
+    @t          -   time instances of the selected samples
+    @a,b        -   time limits
+    @knots      -   total number of knots accross the time interval
+    @tol        -   threshold value for convergence of estimated parameters
+    @stype      -   type of error covariance matrix
+    @w_delta    -   initial value of weight matrix
+    @order      -   order of the LTI system
+
+    returns:
+    @ak         -   estimated parameters
+
+    """
     iteration = 0
     eps = np.inf
     mode = "random"
@@ -524,9 +549,12 @@ def rrls_solver (y, t, a, b, knots, tol, Stype,w_delta, order):
         yE_1 = reconstruct_state(y, t, ak, order)
         var = np.var(y - yE_1) 
         
-        
-        S = get_S(y, t, tk, a, b, ak, n_low, n_max, var, order) #Use this for diagonal matrix
-            
+        if stype == "diagonal":
+            S = get_S(y, t, tk, a, b, ak, n_low, n_max, var, order) #Use this for diagonal matrix
+        else:
+            print ("Unsupported s_type")
+            return 0
+
         #Algo starts
         
         one = np.matmul(w_matrix, P.T)
@@ -552,7 +580,20 @@ def rrls_solver (y, t, a, b, knots, tol, Stype,w_delta, order):
 
 
 def projection_algo(config, y_measured,t, ak):
-    
+    """
+    This function reconstructs the state and their derivatives.
+
+    Parameters:
+
+    @config     -   configuration file
+    @y_measured -   the measured/noisy signal
+    @t          -   time instances of the selected samples
+    @ak         -   system parameters
+
+    return:
+    x_smooth    - estimated states
+    """
+    sample_pts = config['sample_points']
     x_dim = config['dim_x']
     a = config['a']
     b = config['b']
@@ -561,6 +602,6 @@ def projection_algo(config, y_measured,t, ak):
     
     
     for idx in range(1, x_dim):
-        x_smooth[:,idx] = get_yE_k(x_smooth[:,(idx-1)], t, 100, a, b, ak, x_dim)
+        x_smooth[:,idx] = get_yE_k(x_smooth[:,(idx-1)], t, sample_pts, a, b, ak, x_dim)
     
     return x_smooth
