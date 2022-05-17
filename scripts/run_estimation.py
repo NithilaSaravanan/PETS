@@ -22,7 +22,7 @@ def run_algorithm(meth):
     """
     
     print('\n')
-    if meth == 'kalman_known':
+    if meth == 'kalman_statesonly':
         print ("Executing Kalman Filter algorithm.\n")
         kalman_run()
 
@@ -51,7 +51,7 @@ def main():
     #Parse input argument(s)
     parser = argparse.ArgumentParser()
     parser.add_argument('-m', help = 'Select the estimation method you want to use - \
-                    kalman_known, kalman_ukf, kernel_kalman  ', default = 'none')
+                    kalman_statesonly, kalman_ukf, kernel_kalman  ', default = 'none')
 
     try:
         args = parser.parse_args()
