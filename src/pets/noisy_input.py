@@ -38,7 +38,7 @@ def state_space(x,t,A, B):
 
 def noisy_signal(a,b,points,ic,param):
     #Configure this std to add AWGN noise of a set std dev
-    noise_std = 1
+    noise_std = 0
     t = np.linspace(a, b, points)
     # Solve ODE
     ak = np.array((param))

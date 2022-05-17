@@ -12,7 +12,7 @@ from pets.noisy_input import noisy_signal
 from pets.kalman_unknown import kalmanukf_algo
 
 #Importing the results functions from src/pets
-from pets.gen_results import results4
+from pets.results import plot_results, generate_error_metrics
 
 import json
 import numpy as np
@@ -56,41 +56,21 @@ def kalmanukf_run():
 	t = np.linspace(a, b, points)
 	ic = config['init_cond']
 	param = config['a_k']
-	
+	dim = config['dim_x']
 	#Checking order to get the correct call
-	if config['dim_x']==1:
-		yM,yT, awgn_std = noisy_signal(a,b,points,ic,param)
-	elif config['dim_x'] == 2:
-		yM, yT, dyT, awgn_std = noisy_signal(a,b,points,ic,param)
-	elif config['dim_x'] == 3:
-		yM, yT, dyT, ddyT, awgn_std = noisy_signal(a,b,points,ic,param)
-	elif config['dim_x'] == 4:
-		yM, yT, dyT, ddyT, dddyT, awgn_std  =  noisy_signal(a,b,points,ic,param)
+	y_arr_true, yM, awgn_std  =  noisy_signal(a,b,points,ic[:dim],param)
 	
 	
 	#Getting clean states based on the order of the system
-	if config['dim_x']==1:
-		yE = kalmanukf_algo(config,yM)
-	elif config['dim_x'] == 2:
-		yE, dyE = kalmanukf_algo(config,yM)
-	elif config['dim_x'] == 3:
-		yE, dyE, ddyE = kalmanukf_algo(config,yM)
-	elif config['dim_x'] == 4:
-		yE, dyE, ddyE, dddyE = kalmanukf_algo(config,yM)
+	y_arr_est = kalmanukf_algo(config,yM)
 
 	print("States have been reconstructed!")
 
 	results_dir = config['res_dir']
 
 	#sending true and estimated signals for calculations and graphing
-	if config['dim_x']==1:
-		results1(yM, yT, yE, t, results_dir, awgn_std)
-	elif config['dim_x'] == 2:
-		results2(yM, yT, dyT, yE, dyE, t, results_dir, awgn_std)
-	elif config['dim_x'] == 3:
-		results3(yM, yT, dyT, ddyT, yE, dyE, ddyE, t, results_dir, awgn_std)
-	elif config['dim_x'] == 4:
-		results4(yM, yT, dyT, ddyT, dddyT, yE, dyE, ddyE, dddyE, t, results_dir, awgn_std)
+	plot_results(yM, y_arr_true, y_arr_est, t, results_dir)
+	generate_error_metrics(y_arr_true, y_arr_est, results_dir)
 
 	print("All plots, metrics and value dumps have been saved at ", results_dir)
 
