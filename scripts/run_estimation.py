@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-The main script that must be run to execute the contents of this library.
+The main script that executes the contents of this library.
 Run this is the CLI with appropriate arguments to get the intended output.
 """
 
@@ -16,21 +16,39 @@ from run_kernel_projection import kernel_projection
 
 this_dir = osp.dirname(__file__)
 
-def select_algo(meth):
+def run_algorithm(meth):
+    """
+    This method executes the estimation algorithm chosen by the user.
+    """
+    
+    print('\n')
     if meth == 'kalman_known':
+        print ("Executing Kalman Filter algorithm.\n")
         kalman_run()
+
     elif meth == 'kernel_kalman':
+        print ("Executing RRLS and Kalman Filter algorithm.\n")
         kernel_kalman()
-    elif meth == 'kalman_ukf':
-        kalmanukf_run()
+    
     elif meth == 'kernel_projection':
+        print ("Executing RRLS and Projection algorithm.\n")
         kernel_projection()
+    
+    elif meth == 'kalman_ukf':
+        print ("Executing Unscented Kalman Filter algorithm.\n")
+        kalmanukf_run()
+    
     else:
         print("Unrecognized estimation algorithm. Execution terminated. \n")
         sys.exit(0)    
 
+
 def main():
+    """
+    main function
+    """
     
+    #Parse input argument(s)
     parser = argparse.ArgumentParser()
     parser.add_argument('-m', help = 'Select the estimation method you want to use - \
                     kalman_known, kalman_ukf, kernel_kalman  ', default = 'none')
@@ -43,24 +61,24 @@ def main():
         parser.print_help()
         sys.exit(0)
 
-    #config_file = args.c
+    # Estimation algorithm selected by the user
     method_select = args.m
     
     if method_select == 'none':
-        print('\n Please select one of the estimations algorithms and try again \n')
+        print('\n Please select one of the following estimation algorithms and try again. \n')
         parser.print_help()
         sys.exit()
         
-    print("\nPlease make sure to have the config file for", method_select, 
-        "and have the true and the noisy signal available in the noisy_signal.py script.",
-        "\nPlease refer to help to know about all the options.")
+    print("\nPlease make sure you have the config file available in PETS/configs for", method_select,
+        "and the true and the noisy signal are available in the PETS/src/pets/noisy_signal.py script.")
     choice = input("\nPress y/Y to proceed :")
     
-    if (str.upper(choice) == 'Y'):
-        #Commenting just for Anaconda test
-        select_algo(method_select)
-    else:
+    if (str.upper(choice) != 'Y'):
         sys.exit(0)
+
+    # Execute the selected algorithm.
+    run_algorithm(method_select)
+        
     
 if __name__=='__main__':
     main()

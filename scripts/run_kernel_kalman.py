@@ -2,30 +2,40 @@
 # -*- coding: utf-8 -*-
 
 """
-This file executes the RRLS algorithm to estimate the parameters followed
-by the kalman algorithm to reconstruct the states and their derivatives.
+This script executes the RRLS and the Kalman Filter algorithm. 
+The configuration parameters are validated and the necessary functions are invoked.
+
+@author : manoj
 """
 
 import sys
 import os.path as osp
 sys.path.append(osp.join(osp.dirname(__file__), '..', 'src'))
-from pets.rrls import rrls_solver
+
+# Importing the noisy function
 from pets.noisy_input import noisy_signal
+
+# Importing the RRLS parameter estimation function
+from pets.rrls import rrls_solver
+
+# Importing the kalman function
 from pets.kalman import kalman_algo
+
+# Importing the results functions from src/pets
 from pets.results import plot_results, generate_error_metrics
 
 import json
 import numpy as np
 
+# Navigating to the config files
+this_dir = osp.dirname(__file__)
+config_dir = osp.join(this_dir,'..','configs','config_kernel_kalman.json')
 
 def kernel_kalman():
     """
-    Function that executes RRLS algorithm
+    Function that executes RRLS algorithm for parameter estimation.
+    Followed by Kalman Filter for state estimation.
     """
-
-    this_dir = osp.dirname(__file__)
-    config_dir = osp.join(this_dir, '..', 'configs',
-                          'config_kernel_kalman.json')
 
     # Loading the config parameters into the code
     with open(config_dir) as config_file:
@@ -53,7 +63,7 @@ def kernel_kalman():
         print("Please enter a valid directory to store your results")
         sys.exit(0)
 
-    # Import data from config file
+    # Retreive the parameters from the config file.
     a, b, points = [config['a'], config['b'], config['points']]
     t = np.linspace(a, b, points)
     ic = config['init_cond']
@@ -63,16 +73,26 @@ def kernel_kalman():
     knots = config['knots']
     tol = config['tol']
     results_dir = config['res_dir']
-    # Get noisy signal
+
+    # Retreive the noisy signal, the true signal and the noise standard deviation values.
     y_arr_true, y_measured, awgn_std = noisy_signal(a, b, points, ic, param)
 
     # Estimate parameters using RRLS algorithm
     #ak = rrls_solver(y_measured, t, a, b, knots, tol, "diagonal", w_mat , order)
     ak = np.array(param)
-    print(ak)
+    print("The estimated parameters are :", ak)
     
+    # Estimate the states, using the Kalman Filter and RTS smoother.
     y_arr_est = kalman_algo(config, y_measured, ak)
+    
+    print("States have been reconstructed!")
+
+    # Generate graphs comparing true and estimated state values
     plot_results(y_measured, y_arr_true, y_arr_est, t, results_dir)
+
+    # Generate error metrics and store the results 
     generate_error_metrics(y_arr_true, y_arr_est, results_dir)
+
+    print("Complete states information, graphs and error metrics are saved at", osp.abspath(results_dir))
     
     
