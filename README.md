@@ -5,7 +5,7 @@
 ### What is PETs?
 ***PETs*** is a Python-based state and parameter estimation library consisting of 4 different methods to perform estimation of SISO LTI systems. A detailed account of all the methods - their working, their logic, and an incisive comparison of their performances under different conditions have been presented in the authors' thesis documents under the *resources* folder.
 You can install all the required libraries by simply 
-> pip install requirements.txt
+> pip install -r requirements.txt
 
  Below is a summary of the options available:
 
