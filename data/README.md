@@ -1,5 +1,4 @@
-**For the Authors**
+## Data
+Can be used to store results - graphs, state value dumps, error metrics from the algorithm script (output).
 
-Since this library mainly focuses on the estimation of finite stationary signals, the input values are given as a table. An excel file would be the input file that's required here.
-
-*This part needs to be UnitTested too (against the config files)!*
+To know more about this repository, the kernel or the projection method in detail, or various use cases of the kernel-projection method, including extensions to non-linear systems, please refer to the `resources`folder. 

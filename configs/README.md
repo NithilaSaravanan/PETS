@@ -1,6 +1,4 @@
+## Configs
+Stores all the configuration files necessary to run any estimation algorithm properly. Please make sure to correctly modify the parameters in the associated config file before re-running / tuning the algorithms. 
 
-**For the Authors**
-
-This folder will have a collection of csv or a simple excel file that contains all the tunable parameters (for each of the different methods we have) that the user can modify and run to test out different values. This provides a more visual and user friendly way of tuning the values of the different parameters involved. 
-
-*Excel sheet with tabs, one for each of the estimation methods this library supports. Needs to be UnitTested before its run!*
+To know more about config files, this repository, the kernel or the projection method in detail, or various use cases of the kernel-projection method, including extensions to non-linear systems, please refer to the `resources`folder. 
